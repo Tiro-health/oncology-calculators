@@ -1,0 +1,2150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report2Score</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Fira+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+
+    <style>
+      /* ============================================================
+         Reset + base
+      ============================================================ */
+      :root {
+        --bg-page: #eef3f8;
+        --bg-page-alt: #e7eef7;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border-soft: #d7e1ec;
+        --surface: #ffffff;
+        --surface-muted: #f8fbff;
+        --brand: #2563eb;
+        --brand-strong: #1e4fc7;
+        --ok: #15803d;
+        --warn: #c2410c;
+        --radius-lg: 14px;
+        --radius-md: 10px;
+      }
+
+      *, *::before, *::after {
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Open Sans", sans-serif;
+        font-size: 15px;
+        line-height: 1.5;
+        min-height: 100vh;
+        background:
+          radial-gradient(1000px 420px at -12% -8%, #dbeafe 0%, rgba(219,234,254,0) 70%),
+          linear-gradient(180deg, var(--bg-page-alt), var(--bg-page));
+        color: var(--text-main);
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+
+      tiro-magic-clipboard,
+      tiro-form-filler {
+        display: block;
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      tiro-magic-clipboard {
+        display: block;
+      }
+
+      .tiro-content-editable-container {
+        border-radius: 0.625rem !important;
+      }
+
+      .ContentEditable__root:has(> p:only-of-type > br:only-child)::before {
+        content: attr(aria-placeholder);
+        font-size: 14px;
+        color: #999;
+        float: left;
+        height: 0;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      /* ============================================================
+         Header
+      ============================================================ */
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        height: 62px;
+        background: linear-gradient(90deg, #0b2036 0%, #0f2d49 100%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        padding: 0 1.65rem;
+        gap: 1rem;
+        flex-shrink: 0;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+      }
+
+      .header__logo img {
+        display: block;
+        height: 20px;
+        width: auto;
+        filter: brightness(0) invert(1);
+      }
+
+      .header__sep {
+        width: 1px;
+        height: 18px;
+        background: rgba(255, 255, 255, 0.18);
+        flex-shrink: 0;
+      }
+
+      .header__name {
+        font-size: 0.98rem;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: 0.02em;
+      }
+
+      .header__lang {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .header__lang-sep {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 0.75rem;
+      }
+
+      .header__lang-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.75rem;
+        font-weight: 600;
+        font-family: "Open Sans", sans-serif;
+        padding: 0.2rem 0.3rem;
+        border-radius: 0.2rem;
+        letter-spacing: 0.05em;
+        transition: color 0.15s;
+      }
+
+      .header__lang-btn:hover {
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .header__lang-btn--active {
+        color: #ffffff;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
+      /* ============================================================
+         Disclaimer banner
+      ============================================================ */
+      .banner {
+        background: #fffbeb;
+        border-bottom: 1px solid #fcd48f;
+        padding: 0.58rem 1.65rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.72rem;
+        font-size: 0.76rem;
+        color: #78350f;
+        line-height: 1.52;
+        flex-shrink: 0;
+      }
+
+      .banner__icon {
+        flex-shrink: 0;
+        font-size: 0.85rem;
+        margin-top: 0.1rem;
+      }
+
+      .banner__text {
+        flex: 1;
+      }
+
+      .banner__text strong {
+        font-weight: 700;
+      }
+
+      .banner__close {
+        flex-shrink: 0;
+        align-self: flex-start;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #92400e;
+        font-size: 1.125rem;
+        line-height: 1;
+        opacity: 0.55;
+        padding: 0 0.1rem;
+        border-radius: 0.2rem;
+        transition: opacity 0.15s;
+      }
+
+      .banner__close:hover {
+        opacity: 1;
+      }
+
+      /* ============================================================
+         Main content area
+      ============================================================ */
+      .main {
+        flex: 1;
+        padding: 2.5rem 0 6rem;
+      }
+
+      /* ============================================================
+         Hero
+      ============================================================ */
+      .hero {
+        max-width: 1280px;
+        margin: 0 auto 1.5rem;
+        text-align: center;
+      }
+
+      .hero__title {
+        font-size: 1.55rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #0b1f34;
+        line-height: 1.3;
+      }
+
+      /* ============================================================
+         Two-column grid
+      ============================================================ */
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(360px, 0.95fr) minmax(460px, 1.05fr);
+        gap: 1.4rem;
+        max-width: 1280px;
+        margin: 0 auto;
+        align-items: start;
+      }
+
+      /* ============================================================
+         Cards
+      ============================================================ */
+      .card {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.04);
+        transition: box-shadow 0.2s ease;
+      }
+
+      .card:hover {
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08), 0 3px 8px rgba(15, 23, 42, 0.05);
+      }
+
+      /* Tinted header bar inside each card */
+      .card__bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 52px;
+        padding: 0.55rem 1.2rem;
+        background: var(--surface-muted);
+        border-bottom: 1px solid #e6edf5;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      }
+
+      .layout__left {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        position: sticky;
+        top: calc(62px + 1.1rem);
+      }
+
+      .layout__right {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      /* ============================================================
+         Autofill button
+      ============================================================ */
+      tiro-magic-clipboard-button {
+        display: block;
+        width: 100%;
+        margin-top: 0.875rem;
+        padding: 0.75rem 1.25rem;
+        font-family: "Open Sans", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #ffffff;
+        background: #2563eb;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+        letter-spacing: 0.01em;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(37,99,235,0.35);
+      }
+
+      tiro-magic-clipboard-button:hover {
+        background: #1d4ed8;
+        box-shadow: 0 4px 12px rgba(37,99,235,0.45);
+      }
+
+      tiro-magic-clipboard-button:active {
+        transform: scale(0.98);
+      }
+
+      tiro-magic-clipboard-button[data-state="pending"] {
+        background: #2563eb;
+        cursor: wait;
+        opacity: 0.75;
+      }
+
+      tiro-magic-clipboard-button[data-state="pending"]::before {
+        content: "";
+        display: inline-block;
+        width: 0.85em;
+        height: 0.85em;
+        margin-right: 0.5em;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        border-top-color: #fff;
+        border-radius: 50%;
+        vertical-align: -0.1em;
+        animation: mc-spin 0.6s linear infinite;
+      }
+
+      @keyframes mc-spin {
+        to { transform: rotate(360deg); }
+      }
+
+      tiro-magic-clipboard-button[data-state="success"] {
+        background: #16a34a;
+        cursor: default;
+      }
+
+      tiro-magic-clipboard-button[data-state="success"]::before {
+        content: "\2713";
+        margin-right: 0.4em;
+      }
+
+      tiro-magic-clipboard-button[data-state="error"] {
+        background: #dc2626;
+        cursor: default;
+      }
+
+      .autofill-meta {
+        margin-top: 0.4rem;
+        min-height: 0;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #475569;
+        line-height: 1.4;
+      }
+
+      .autofill-meta--error {
+        color: #b91c1c;
+      }
+
+      .card__bar-label {
+        font-size: 0.67rem;
+        font-weight: 700;
+        color: #5b6d82;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .card__step {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.2rem 0.52rem;
+        border-radius: 999px;
+        background: #e9f1ff;
+        color: #2858b8;
+        font-size: 0.64rem;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        margin-right: 0.5rem;
+      }
+
+      /* Card body padding */
+      .card__body {
+        padding: 1.3rem;
+      }
+
+      /* ============================================================
+         Template selector
+      ============================================================ */
+      .template-sel {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .template-sel label {
+        font-size: 0.64rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #5b6d82;
+        white-space: nowrap;
+      }
+
+      .combobox {
+        position: relative;
+        min-width: 210px;
+      }
+
+      .combobox__input {
+        width: 100%;
+        height: 34px;
+        padding: 0 1.9rem 0 0.65rem;
+        border: 1px solid #d6e1ee;
+        border-radius: 0.5rem;
+        background: #ffffff;
+        color: #1e293b;
+        font-size: 0.8rem;
+        font-family: "Open Sans", sans-serif;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        cursor: pointer;
+      }
+      .combobox__input:focus {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+        cursor: text;
+      }
+
+      .combobox__toggle {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 34px;
+        width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        padding: 0;
+        border-radius: 0 0.375rem 0.375rem 0;
+      }
+      .combobox__toggle svg {
+        transition: transform 0.15s;
+      }
+      .combobox.is-open .combobox__toggle svg {
+        transform: rotate(180deg);
+      }
+
+      .combobox__list {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        list-style: none;
+        padding: 0.25rem;
+        margin: 0;
+        z-index: 100;
+        max-height: 220px;
+        overflow-y: auto;
+      }
+      .combobox__list.open { display: block; }
+
+      .combobox__option {
+        padding: 0.45rem 0.625rem;
+        border-radius: 0.3rem;
+        font-size: 0.78rem;
+        cursor: pointer;
+        color: #1e293b;
+      }
+      .combobox__option:not(.combobox__option--empty):hover {
+        background: #f1f5f9;
+      }
+      .combobox__option--active {
+        background: #eff6ff;
+        color: #1d4ed8;
+      }
+      .combobox__option--active:hover {
+        background: #eff6ff;
+      }
+      .combobox__option--empty {
+        color: #94a3b8;
+        cursor: default;
+      }
+
+      /* ============================================================
+         Calculator search modal
+      ============================================================ */
+      .calc-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 15vh;
+      }
+
+      .calc-modal.open {
+        display: flex;
+      }
+
+      .calc-modal__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(2px);
+      }
+
+      .calc-modal__box {
+        position: relative;
+        width: 480px;
+        max-width: calc(100vw - 2rem);
+        background: #ffffff;
+        border-radius: 0.625rem;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
+        overflow: hidden;
+      }
+
+      .calc-modal__search {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #edf1f7;
+      }
+
+      .calc-modal__search-icon {
+        flex-shrink: 0;
+        color: #94a3b8;
+      }
+
+      .calc-modal__input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 0.875rem;
+        font-family: "Open Sans", sans-serif;
+        color: #1e293b;
+        background: transparent;
+      }
+
+      .calc-modal__input::placeholder {
+        color: #cbd5e1;
+      }
+
+      .calc-modal__list {
+        list-style: none;
+        padding: 0.375rem;
+        margin: 0;
+        max-height: 320px;
+        overflow-y: auto;
+      }
+
+      .calc-modal__item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 0.75rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        font-size: 0.8rem;
+        color: #1e293b;
+        transition: background 0.1s, color 0.1s;
+      }
+
+      .calc-modal__item--active {
+        background: #eff6ff;
+        color: #1d4ed8;
+      }
+
+      .calc-modal__item--current::after {
+        content: "current";
+        font-size: 0.6rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #93c5fd;
+      }
+
+      .calc-modal__empty {
+        padding: 1.25rem 1rem;
+        font-size: 0.8rem;
+        color: #94a3b8;
+        text-align: center;
+      }
+
+      /* ============================================================
+         Missing-fields badge (shown in left card bar after autofill)
+      ============================================================ */
+      .missing-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.15rem 0.55rem;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #c2410c;
+        border-radius: 999px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        margin-left: auto;
+      }
+
+      .missing-badge--done {
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+        color: #15803d;
+      }
+
+      /* ============================================================
+         Sticky score bar
+      ============================================================ */
+      .score-bar {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: linear-gradient(90deg, #0b2036 0%, #0f2d49 100%);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 -4px 24px rgba(15, 23, 42, 0.25);
+        padding: 0.75rem 1.5rem;
+        align-items: center;
+        gap: 1.25rem;
+      }
+
+      .score-bar.visible {
+        display: flex;
+      }
+
+      .score-bar__label {
+        font-size: 0.62rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(255, 255, 255, 0.4);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .score-bar__scores {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        flex: 1;
+      }
+
+      .score-chip {
+        display: flex;
+        align-items: baseline;
+        gap: 0.45rem;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 0.5rem;
+        padding: 0.35rem 0.8rem;
+      }
+
+      .score-chip__label {
+        font-size: 0.72rem;
+        color: rgba(255, 255, 255, 0.55);
+        font-weight: 500;
+      }
+
+      .score-chip__value {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #ffffff;
+        font-family: "Fira Mono", monospace;
+        letter-spacing: -0.01em;
+      }
+
+      .score-bar__copy {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.55rem 1.1rem;
+        font-size: 0.82rem;
+        font-family: "Open Sans", sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #ffffff;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        border: 1px solid #1e40af;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+        transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .score-bar__copy:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
+        filter: brightness(1.06);
+      }
+
+      .score-bar__copy:active {
+        transform: translateY(0);
+      }
+
+      .score-bar__copy.copied {
+        background: linear-gradient(135deg, #16a34a, #15803d);
+        border-color: #15803d;
+        box-shadow: 0 4px 14px rgba(21, 128, 61, 0.4);
+      }
+
+      .score-bar__copy svg {
+        flex-shrink: 0;
+        width: 13px;
+        height: 13px;
+      }
+
+      @keyframes copy-pulse {
+        0%   { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5), 0 4px 14px rgba(37, 99, 235, 0.4); }
+        65%  { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0), 0 4px 14px rgba(37, 99, 235, 0.4); }
+        100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0), 0 4px 14px rgba(37, 99, 235, 0.4); }
+      }
+
+      .score-bar__copy.results__copy--attention {
+        animation: copy-pulse 1.9s ease-in-out infinite;
+      }
+
+      /* ============================================================
+         Info tooltip
+      ============================================================ */
+      .info-tip {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        vertical-align: middle;
+        margin-left: 0.3rem;
+        cursor: default;
+      }
+
+      .info-tip__icon {
+        color: #b0bec5;
+        transition: color 0.15s;
+        display: block;
+      }
+
+      .info-tip:hover .info-tip__icon {
+        color: #64748b;
+      }
+
+      .info-tip__bubble {
+        display: none;
+        position: absolute;
+        left: 50%;
+        bottom: calc(100% + 8px);
+        transform: translateX(-50%);
+        width: 220px;
+        background: #1e293b;
+        color: #f1f5f9;
+        font-size: 0.7rem;
+        font-weight: 400;
+        line-height: 1.5;
+        padding: 0.5rem 0.65rem;
+        border-radius: 0.375rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+        pointer-events: none;
+        text-transform: none;
+        letter-spacing: 0;
+        z-index: 100;
+      }
+
+      /* small arrow */
+      .info-tip__bubble::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 5px solid transparent;
+        border-top-color: #1e293b;
+      }
+
+      .info-tip:hover .info-tip__bubble {
+        display: block;
+      }
+
+      /* ============================================================
+         Footer
+      ============================================================ */
+      .footer {
+        padding: 1.6rem 1.5rem 2rem;
+        text-align: center;
+        font-family: "Open Sans", sans-serif;
+        font-size: 0.625rem;
+        color: #94a3b8;
+        letter-spacing: 0.04em;
+        flex-shrink: 0;
+      }
+
+      .footer a {
+        color: #64748b;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        color: #475569;
+        text-decoration: underline;
+      }
+
+      .footer__dot {
+        display: inline-block;
+        margin: 0 0.375rem;
+        opacity: 0.5;
+      }
+
+      /* ============================================================
+         Responsive
+      ============================================================ */
+      @media (max-width: 1024px) {
+        .main {
+          padding: 1.5rem 0.75rem 1.5rem;
+        }
+
+        .hero__title {
+          font-size: 1.2rem;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+          column-gap: 0;
+          row-gap: 0.9rem;
+        }
+
+        .hero,
+        .layout__left,
+        .layout__right {
+          grid-column: 1;
+          grid-row: auto;
+          position: static;
+        }
+
+        .card {
+          border-radius: 12px;
+        }
+
+        .card__bar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+          min-height: auto;
+          padding: 0.65rem 0.85rem;
+        }
+
+        .card__body {
+          padding: 0.85rem;
+        }
+
+        .template-sel {
+          width: 100%;
+          flex-wrap: wrap;
+          gap: 0.45rem;
+        }
+
+        .combobox {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .combobox__input {
+          width: 100%;
+        }
+
+        .result-row {
+          gap: 0.5rem;
+          align-items: flex-start;
+        }
+
+        .result-row__label {
+          white-space: normal;
+        }
+
+        /* Prevent tooltip overflowing left edge */
+        .info-tip__bubble {
+          left: 0;
+          transform: none;
+          max-width: calc(100vw - 3rem);
+        }
+
+        .info-tip__bubble::after {
+          left: 1rem;
+          transform: none;
+        }
+      }
+    </style>
+    <script>
+      !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group identify setPersonProperties setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags resetGroups onFeatureFlags addFeatureFlagsHandler onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+      posthog.init('phc_Hay5R4mHZSxd6IfGDqlTCDVEEKTV4c6yaCtkymKdvbx', {
+          api_host: 'https://ua.tiro.health',
+          defaults: '2026-01-30'
+      })
+    </script>
+  </head>
+  <body>
+
+    <!-- ===== Header ===== -->
+    <header class="header">
+      <a class="header__logo" href="https://tiro.health" target="_blank" rel="noopener noreferrer">
+        <img
+          src="https://cdn.prod.website-files.com/64f4979d1f21b45a5fcfe2d6/64f4a430bca35ec50ea7aff9_logo-blue.png"
+          alt="Tiro Health"
+        />
+      </a>
+      <div class="header__sep"></div>
+      <span class="header__name">Report2Score</span>
+      <div class="header__lang">
+        <button class="header__lang-btn" data-lang="en" data-ph-capture-attribute-language="en">EN</button>
+        <span class="header__lang-sep">|</span>
+        <button class="header__lang-btn" data-lang="nl" data-ph-capture-attribute-language="nl">NL</button>
+      </div>
+    </header>
+
+    <!-- ===== Disclaimer banner ===== -->
+    <div class="banner" id="banner" role="note">
+      <span class="banner__icon">⚠️</span>
+      <span class="banner__text">
+        <strong data-i18n="bannerBold">For informational purposes only.</strong>
+        <span data-i18n="bannerBody">Scores and results are intended to support professional judgment, not replace it. Always verify against current guidelines and the patient's clinical context. This is not a substitute for qualified medical advice, diagnosis, or treatment.</span>
+      </span>
+      <button class="banner__close" id="banner-close" type="button" aria-label="Dismiss" data-i18n-aria-label="bannerDismiss">&#x00D7;</button>
+    </div>
+
+    <!-- ===== Main ===== -->
+    <main class="main">
+      <div class="hero">
+        <h1 class="hero__title" data-i18n="heroTitle">Plak uw verslag &rarr; bereken scores onmiddellijk</h1>
+      </div>
+      <div class="layout">
+
+        <!-- Left column: Magic Clipboard + CTA -->
+        <div class="layout__left">
+
+          <div class="card">
+            <div class="card__bar">
+              <span class="card__bar-label">
+                <span class="card__step" data-i18n="workflowInput">Step 1</span>
+                <span data-i18n="autofillLabel">Klinisch verslag</span>
+              </span>
+              <span class="missing-badge" id="missing-badge" style="display:none" aria-live="polite"></span>
+            </div>
+            <div class="card__body">
+              <tiro-magic-clipboard for="calculator-form" hide-toolbar data-i18n-placeholder="autofillPlaceholder" placeholder="Plak hier uw verslag en extraheer automatisch data voor de berekening">
+                <tiro-magic-clipboard-button id="autofill-btn" data-i18n="autofillBtn">Verslag verwerken</tiro-magic-clipboard-button>
+              </tiro-magic-clipboard>
+              <p class="autofill-meta" id="autofill-meta" aria-live="polite"></p>
+            </div>
+          </div>
+
+        </div><!-- /layout__left -->
+
+        <!-- Right column: Step 2 — Calculator form -->
+        <div class="layout__right">
+          <div class="card">
+            <div class="card__bar">
+              <div class="template-sel">
+                <span class="card__step" data-i18n="workflowReview">Step 2</span>
+                <label for="calc-combobox" data-i18n="calcLabel">Calculator</label>
+                <div class="combobox">
+                  <input
+                    class="combobox__input"
+                    id="calc-combobox"
+                    type="text"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-controls="calc-combobox-list"
+                    aria-haspopup="listbox"
+                    autocomplete="off"
+                    spellcheck="false"
+                  >
+                  <button type="button" class="combobox__toggle" id="calc-combobox-toggle" tabindex="-1" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  <ul class="combobox__list" id="calc-combobox-list" role="listbox"></ul>
+                </div>
+              </div>
+            </div>
+            <div class="card__body">
+              <tiro-form-filler
+                id="calculator-form"
+                sdc-endpoint-address="https://sdc-staging.tiro.health/fhir/r5"
+                compact-grouping
+              ></tiro-form-filler>
+            </div>
+          </div>
+        </div><!-- /layout__right -->
+
+      </div>
+    </main>
+
+    <!-- ===== Sticky score bar ===== -->
+    <div class="score-bar" id="result-panel">
+      <div class="score-bar__scores" id="result-items"></div>
+      <button class="score-bar__copy results__copy--attention" id="copy-btn" type="button">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span data-i18n-text>Kopieer</span>
+      </button>
+    </div>
+
+    <!-- ===== Footer ===== -->
+    <footer class="footer">
+      Built by <a href="https://tiro.health" target="_blank" rel="noopener noreferrer">Tiro.health</a> — structured data for clinical workflows
+      <span class="footer__dot">&middot;</span>
+      &copy; <span id="footer-year"></span>
+    </footer>
+
+    <!-- ===== Calculator search modal ===== -->
+    <div class="calc-modal" id="calc-modal" role="dialog" aria-modal="true" aria-label="Select calculator" data-i18n-aria-label="modalAriaLabel">
+      <div class="calc-modal__backdrop" id="calc-modal-backdrop"></div>
+      <div class="calc-modal__box">
+        <div class="calc-modal__search">
+          <svg class="calc-modal__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="calc-modal__input" id="calc-modal-input" type="text" placeholder="Search calculators…" autocomplete="off" spellcheck="false" aria-label="Search calculators" data-i18n-placeholder="searchPlaceholder" data-i18n-aria-label="searchAriaLabel">
+        </div>
+        <ul class="calc-modal__list" id="calc-modal-list" role="listbox"></ul>
+      </div>
+    </div>
+
+    <script src="https://cdn.tiro.health/sdk/next/tiro-web-sdk.iife.js"></script>
+
+    <script>
+      const TRANSLATIONS = {
+        en: {
+          mainTitle:         'Clinical Calculators',
+          mainSubtitle:      'Paste once, review quickly, and copy structured results with confidence.',
+          heroTitle:         'Paste your report \u2192 get your scores instantly',
+          workflowInput:     'Step 1',
+          workflowReview:    'Step 2',
+          workflowCopy:      'Step 3',
+          resultsHintPending:'Complete Step 2 to unlock copy to clipboard.',
+          resultsHintReady:  'Review the selected rows, then copy to clipboard.',
+          bannerBold:        'For informational purposes only.',
+          bannerBody:        'Scores and results are intended to support professional judgment, not replace it. Always verify against current guidelines and the patient\'s clinical context. This is not a substitute for qualified medical advice, diagnosis, or treatment.',
+          bannerDismiss:     'Dismiss',
+          autofillLabel:       'Clinical Report',
+          autofillPlaceholder: 'Paste the patient\'s clinical report here...',
+          autofillClear:       'Clear',
+          autofillError:       'Auto-fill could not process the report. Please fill in the fields manually.',
+          autofillProcessing:  'Processing report...',
+          autofillBadge:       (x, y) => `${x} of ${y} fields filled`,
+          autofillBtn:         'Process report',
+          missingCount:        (n) => n === 1 ? `${n} field missing` : `${n} fields missing`,
+          allFieldsDone:       'All fields filled ✓',
+          calcLabel:         'Calculator',
+          resultsLabel:      'Results',
+          copyBtn:           'Copy Results',
+          copiedBtn:         'Copied!',
+          poweredBy:         'Powered by',
+          searchPlaceholder: 'Search calculators\u2026',
+          searchAriaLabel:   'Search calculators',
+          modalAriaLabel:    'Select calculator',
+          noResults:         'No calculators found',
+          boolYes:           'Yes',
+          boolNo:            'No',
+          calcNames: {
+            tri:        'TRI Score',
+            hasbled:    'HAS-BLED Score',
+            euroscore2: 'EuroSCORE II',
+            chadsvasc:  'CHA\u2082DS\u2082-VASc Score',
+            bmi:        'BMI',
+          },
+        },
+        nl: {
+          mainTitle:         'Klinische calculators',
+          mainSubtitle:      'Plak één keer, controleer snel en kopieer met vertrouwen gestructureerde resultaten.',
+          heroTitle:         'Plak uw verslag \u2192 bereken scores onmiddellijk',
+          workflowInput:     'Stap 1',
+          workflowReview:    'Stap 2',
+          workflowCopy:      'Stap 3',
+          resultsHintPending:'Rond stap 2 af om kopiëren naar het klembord te activeren.',
+          resultsHintReady:  'Controleer de geselecteerde rijen en kopieer vervolgens naar het klembord.',
+          bannerBold:        'Enkel ter informatie.',
+          bannerBody:        'Scores en resultaten zijn bedoeld ter ondersteuning van klinisch oordeel, niet ter vervanging ervan. Verifieer altijd aan de hand van actuele richtlijnen en de klinische context van de patiënt. Dit is geen vervanging voor gekwalificeerd medisch advies, diagnose of behandeling.',
+          bannerDismiss:     'Sluiten',
+          autofillLabel:       'Klinisch verslag',
+          autofillPlaceholder: 'Plak hier uw verslag en extraheer automatisch data voor de berekening',
+          autofillClear:       'Wissen',
+          autofillError:       'Auto-fill kon het verslag niet verwerken. Vul de velden manueel in.',
+          autofillProcessing:  'Verslag verwerken...',
+          autofillBadge:       (x, y) => `${x} van ${y} velden ingevuld`,
+          autofillBtn:         'Verslag verwerken',
+          missingCount:        (n) => n === 1 ? `${n} veld ontbreekt` : `${n} velden ontbreken`,
+          allFieldsDone:       'Alle velden ingevuld ✓',
+          calcLabel:         'Calculator',
+          resultsLabel:      'Resultaten',
+          copyBtn:           'Resultaten kopi\u00ebren',
+          copiedBtn:         'Gekopi\u00eberd!',
+          poweredBy:         'Aangedreven door',
+          searchPlaceholder: 'Zoek calculators\u2026',
+          searchAriaLabel:   'Zoek calculators',
+          modalAriaLabel:    'Selecteer calculator',
+          noResults:         'Geen calculators gevonden',
+          boolYes:           'Ja',
+          boolNo:            'Nee',
+          calcNames: {
+            tri:        'TRI Score',
+            hasbled:    'HAS-BLED Score',
+            euroscore2: 'EuroSCORE II',
+            chadsvasc:  'CHA\u2082DS\u2082-VASc Score',
+            bmi:        'BMI',
+          },
+        },
+      };
+
+      const CALCULATORS = [
+        {
+          id: 'euroscore2',
+          label: 'EuroSCORE II',
+          url: 'http://templates.tiro.health/templates/3171b88fff9a4b61af84fe354a26b48b',
+          resultCount: 1,
+          excludeLabels: ['nierfunctie categorie', 'lvef categorie'],
+          appendPercentAll: true,
+        },
+        {
+          id: 'tri',
+          label: 'TRI Score',
+          url: 'http://templates.tiro.health/templates/718620a797d84dd58bd2c92d395e0e90',
+          resultLabels: ['tri score', 'tri-score', 'risicoscore', 'geschatte intramurale mortaliteit'],
+          appendPercentLabels: ['geschatte intramurale mortaliteit'],
+        },
+        {
+          id: 'hasbled',
+          label: 'HAS-BLED Score',
+          url: 'http://templates.tiro.health/templates/71a49276146c4492a9053bfb296d0d17',
+          resultLabels: ['has-bled score', 'bloedingsrisico', 'bloedingen per 100 patiëntjaren', 'aanbeveling'],
+          appendPercentLabels: ['bloedingen per 100 patiëntjaren'],
+        },
+        {
+          id: 'chadsvasc',
+          label: 'CHA\u2082DS\u2082-VASc Score',
+          url: 'http://templates.tiro.health/templates/9f1f296ba5ae415f97c8e71464c402df',
+          resultCount: 1
+        },
+      ];
+
+      // ---- Per-calculator field definitions (for checklist) ----
+      // linkId values come from the local FHIR Questionnaire resources.
+      // The last item in each array is the calculated score — excluded from checklist.
+      const CALCULATOR_FIELDS = {
+        chadsvasc: [
+          { linkId: '019d12b3-87c2-7dda-9973-dd83c286c5e9', labels: ['Leeftijd'] },
+          { linkId: '019d12b3-87c2-7dda-9973-eeda5399cefe', labels: ['Geslacht'] },
+          { linkId: '019d12b3-87c2-7dda-9973-fccbc530555d', labels: ['Voorgeschiedenis van hartfalen (CHF)', 'Hartfalen'] },
+          { linkId: '019d12b3-87c2-7dda-9974-0f72342b28d9', labels: ['Voorgeschiedenis van hypertensie', 'Hypertensie'] },
+          { linkId: '019d12b3-87c2-7dda-9974-182d496a3796', labels: ['Voorgeschiedenis van beroerte/TIA/trombo-embolie', 'Beroerte / TIA'] },
+          { linkId: '019d12b3-87c2-7dda-9974-28017084dbd2', labels: ['Voorgeschiedenis van vaatziekte (MI, PAD of aortaplaque)', 'Vaatziekte'] },
+          { linkId: '019d12b3-87c2-7dda-9974-3a768b8d2690', labels: ['Voorgeschiedenis van diabetes', 'Diabetes'] },
+        ],
+        euroscore2: [
+          { linkId: '019cfab4-f257-799c-9df2-257a2358dd42', labels: ['Leeftijd'] },
+          { linkId: '019cfab4-f257-799c-9df2-37528cfe2ff0', labels: ['Geslacht'] },
+          { linkId: '019cfab4-f257-799c-9df2-43f960ae27ea', labels: ['Insuline-afhankelijke diabetes'] },
+          { linkId: '019cfab4-f257-799c-9df2-507647e5b2b6', labels: ['Chronisch obstructief longlijden', 'COPD'] },
+          { linkId: '019cfab4-f257-799c-9df2-67c2465b8ba3', labels: ['Verminderde mobiliteit'] },
+          { linkId: '019cfab4-f257-799c-9df2-758d25b8cb10', labels: ['eGFR', 'EGFR'] },
+          { linkId: '019cfab4-f257-799c-9df2-93c11b2d4a14', labels: ['Onder nierdialyse', 'Nierdialyse'] },
+          { linkId: '019cfab4-f257-799c-9df2-a35cffcfb233', labels: ['Kritieke toestand'] },
+          { linkId: '019cfab4-f257-799c-9df2-b49604d154e7', labels: ['NYHA class', 'NYHA klasse'] },
+          { linkId: '019cfab4-f257-799c-9df2-c27a30983a24', labels: ['Angor CCS4'] },
+          { linkId: '019cfab4-f257-799c-9df2-d2adc7285ad9', labels: ['Extracardiale arteriopathie'] },
+          { linkId: '019cfab4-f257-799c-9df2-e25f6e7b89ca', labels: ['Heeft de patiënt reeds een hartoperatie ondergaan?', 'Voorafgaande hartoperatie'] },
+          { linkId: '019cfab4-f257-799c-9df2-f703c71ff24f', labels: ['Actieve endocarditis'] },
+          { linkId: '019cfab4-f257-799c-9df3-0462ff6403c7', labels: ['LVEF (%)', 'LVEF'] },
+          { linkId: '019cfab4-f257-799c-9df3-26d3767c5bf9', labels: ['Recent myocardinfarct'] },
+          { linkId: '019cfab4-f257-799c-9df3-3060bd1d681e', labels: ['Systolische pulmonale arteriële druk', 'Systolische pulmonale arteriele druk'] },
+          { linkId: '019cfab4-f257-799c-9df3-47e2c5c6d6eb', labels: ['Urgentie'] },
+          { linkId: '019cfab4-f257-799c-9df3-559b6e3e6bed', labels: ['Aantal procedures'] },
+          { linkId: '019cfab4-f257-799c-9df3-669be3e2833b', labels: ['Chirurgie aan thoracale aorta'] },
+        ],
+        hasbled: [
+          { linkId: '019d12c9-d7b5-7cc8-80a5-80a9ba9aab18', label: 'Hypertensie' },
+          { linkId: '019d12c9-d7b5-7cc8-80a5-95ec86411aec', label: 'Abnormale nierfunctie' },
+          { linkId: '019d12c9-d7b5-7cc8-80a5-a7ebfab592cf', label: 'Abnormale leverfunctie' },
+          { linkId: '019d12c9-d7b5-7cc8-80a5-b3a6d984a651', label: 'Voorgeschiedenis van beroerte' },
+          { linkId: '019d12c9-d7b5-7cc8-80a5-c26ac387dd05', label: 'Eerdere ernstige bloeding' },
+          { linkId: '019d12c9-d7b5-7cc8-80a5-d1247237d95e', label: 'Labiele INR' },
+          { linkId: '019d12c9-d7b5-7cc8-80a5-e5820d06bb21', label: 'Leeftijd >65' },
+          { linkId: '019d12c9-d7b5-7cc8-80a5-f190c8a408f0', label: 'Bloedingsbevorderende medicatie' },
+          { linkId: '019d12c9-d7b5-7cc8-80a6-054ddafabdb0', label: 'Alcoholgebruik' },
+        ],
+        tri: [
+          { linkId: '019d12b7-3a9c-7770-8819-a44e59c481d5', labels: ['Leeftijd ≥ 70 jaar'] },
+          { linkId: '019d12b7-3a9c-7770-8819-b3fb430f3af7', labels: ['NYHA functionele klasse III–IV', 'NYHA klasse III–IV'] },
+          { linkId: '019d12b7-3a9c-7770-8819-c66b3a451171', labels: ['Tekenen van rechtszijdig hartfalen', 'Rechtszijdig hartfalen'] },
+          { linkId: '019d12b7-3a9c-7770-8819-d60d982999fd', labels: ['Furosemide dagdosis ≥ 125 mg', 'Furosemide ≥ 125 mg/dag'] },
+          { linkId: '019d12b7-3a9c-7770-8819-e6e5ad0b2436', labels: ['GFR < 30 mL/min'] },
+          { linkId: '019d12b7-3a9c-7770-8819-f72ab2c5fe37', labels: ['Verhoogd totaal bilirubine'] },
+          { linkId: '019d12b7-3a9c-7770-881a-06d9dee1bbf5', labels: ['LVEF < 60%'] },
+          { linkId: '019d12b7-3a9c-7770-881a-17af1d0d32bc', labels: ['Matige/ernstige RV-dysfunctie'] },
+        ],
+      };
+
+      // ---- Elements ----
+      const form            = document.getElementById('calculator-form');
+      const resultPanel     = document.getElementById('result-panel');
+      const resultItems     = document.getElementById('result-items');
+      const copyBtn         = document.getElementById('copy-btn');
+      const magicClipboard  = document.querySelector('tiro-magic-clipboard');
+      const magicBtn        = document.querySelector('tiro-magic-clipboard-button');
+      const autofillMeta    = document.getElementById('autofill-meta');
+      const calcModal       = document.getElementById('calc-modal');
+      const calcModalInput  = document.getElementById('calc-modal-input');
+      const calcModalList   = document.getElementById('calc-modal-list');
+      let currentCalcId = CALCULATORS[0].id;
+      let lastResponse  = null;  // cached for re-use
+      let previousResponse = null;
+      let modalActiveIdx = 0;
+      let filteredCalcs  = CALCULATORS.slice();
+      let extractionStartedAt = null;
+      let extractionTextLength = 0;
+      let extractionTimerId = null;
+      let autofillInFlight = false;
+      let autofillUsedInSession = false;
+      let lastPasteAt = null;
+      let allFieldsComplete = false;
+      let justCompletedAutofill = false;
+      let pageViewCaptured = false;
+      const autofilledFieldIds = new Set();
+      const latestItemByLinkId = new Map();
+
+      // ---- Language / i18n ----
+      let currentLang = localStorage.getItem('lang') || 'nl';
+
+      function applyLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('lang', lang);
+        document.documentElement.lang = lang;
+        const t = TRANSLATIONS[lang];
+
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.dataset.i18n;
+          if (t[key] !== undefined) el.textContent = t[key];
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+          const val = t[el.dataset.i18nPlaceholder];
+          if (val) el.setAttribute('placeholder', val);
+        });
+        document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+          el.setAttribute('aria-label', t[el.dataset.i18nAriaLabel] ?? el.getAttribute('aria-label'));
+        });
+
+        // Copy button: update text span only, preserve SVG
+        const copyTextSpan = copyBtn.querySelector('[data-i18n-text]');
+        if (copyTextSpan) copyTextSpan.textContent = ' ' + t.copyBtn;
+
+        // Update CALCULATORS labels
+        CALCULATORS.forEach(c => { c.label = t.calcNames[c.id] || c.label; });
+        // Sync combobox display if needed
+        if (typeof renderComboList === 'function') renderComboList();
+
+        // Toggle active state on lang buttons
+        document.querySelectorAll('.header__lang-btn').forEach(btn => {
+          btn.classList.toggle('header__lang-btn--active', btn.dataset.lang === lang);
+        });
+
+        // Update content-editable placeholder inside tiro-magic-clipboard shadow DOM
+        setMagicClipboardPlaceholder(t.autofillPlaceholder);
+      }
+
+      // Walk tiro-magic-clipboard shadow DOM to set aria-placeholder on the content editable
+      function setMagicClipboardPlaceholder(text) {
+        const mc = document.querySelector('tiro-magic-clipboard');
+        if (!mc) return;
+        function walk(root) {
+          const iter = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+          let node;
+          while ((node = iter.nextNode())) {
+            if (node.classList?.contains('ContentEditable__root') ||
+                node.getAttribute('contenteditable') === 'true' ||
+                node.getAttribute('role') === 'textbox') {
+              node.setAttribute('aria-placeholder', text);
+            }
+            if (node.shadowRoot) walk(node.shadowRoot);
+          }
+        }
+        if (mc.shadowRoot) walk(mc.shadowRoot);
+        // Also walk children appended to light DOM (the content editable container)
+        walk(mc);
+      }
+
+      document.querySelectorAll('.header__lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
+      });
+
+      // Set placeholder once SDK has mounted (React renders asynchronously)
+      setTimeout(() => setMagicClipboardPlaceholder(TRANSLATIONS[currentLang].autofillPlaceholder), 800);
+
+      function getCalculatorName() {
+        return CALCULATORS.find(c => c.id === currentCalcId)?.label || currentCalcId;
+      }
+
+      function captureEvent(name, props = {}) {
+        if (!window.posthog?.capture) return;
+        window.posthog.capture(name, props);
+      }
+
+      function capturePageView() {
+        if (pageViewCaptured) return;
+        pageViewCaptured = true;
+        captureEvent('calculator_page_viewed', {
+          calculator_name: getCalculatorName(),
+          page_path: window.location.pathname || '/',
+        });
+      }
+
+      function getTrackedFields() {
+        return CALCULATOR_FIELDS[currentCalcId] || [];
+      }
+
+      function getMagicClipboardText() {
+        if (!magicClipboard) return '';
+        let text = '';
+        const readNode = node => {
+          if (!node || text) return;
+          if (node.classList?.contains('ContentEditable__root') ||
+              node.getAttribute?.('contenteditable') === 'true' ||
+              node.getAttribute?.('role') === 'textbox') {
+            text = (node.innerText || node.textContent || '').trim();
+          }
+        };
+        if (magicClipboard.shadowRoot) deepWalk(magicClipboard.shadowRoot, readNode);
+        if (!text) deepWalk(magicClipboard, readNode);
+        return text;
+      }
+
+      function setAutofillMeta(text = '', type = '') {
+        if (!autofillMeta) return;
+        autofillMeta.textContent = text;
+        autofillMeta.classList.toggle('autofill-meta--error', type === 'error');
+      }
+
+      function clearAutofillMeta() {
+        setAutofillMeta('');
+      }
+
+      function setMagicButtonState(state = '') {
+        if (!magicBtn) return;
+        if (state) magicBtn.setAttribute('data-state', state);
+        else magicBtn.removeAttribute('data-state');
+      }
+
+      function countFilledFields(response) {
+        const fields = getTrackedFields();
+        let filled = 0;
+        fields.forEach(field => {
+          const item = findFieldItem(response, field) || latestItemByLinkId.get(field.linkId);
+          if (isAnswered(item)) filled++;
+        });
+        return { filled, total: fields.length };
+      }
+
+      function updateLatestItemsFromResponse(response) {
+        const fields = getTrackedFields();
+        fields.forEach(field => {
+          const item = findFieldItem(response, field);
+          if (item) latestItemByLinkId.set(field.linkId, item);
+        });
+      }
+
+      function getFieldEventValue(item) {
+        const a = item?.answer?.[0];
+        if (!a) return 'cleared';
+        if (a.valueCoding) return a.valueCoding.code || a.valueCoding.display || 'coding';
+        if (a.valueBoolean !== undefined) return a.valueBoolean ? 'true' : 'false';
+        if (a.valueInteger !== undefined) return String(a.valueInteger);
+        if (a.valueDecimal !== undefined) return String(a.valueDecimal);
+        if (a.valueString !== undefined) return a.valueString;
+        return 'set';
+      }
+
+      function failAutofill(errorType) {
+        if (!autofillInFlight) return;
+        autofillInFlight = false;
+        const duration = extractionStartedAt ? Date.now() - extractionStartedAt : 0;
+        if (extractionTimerId) {
+          clearTimeout(extractionTimerId);
+          extractionTimerId = null;
+        }
+        setMagicButtonState('error');
+        setTimeout(() => setMagicButtonState(''), 1800);
+        setAutofillMeta(TRANSLATIONS[currentLang].autofillError, 'error');
+        captureEvent('autofill_extraction_failed', {
+          calculator_name: getCalculatorName(),
+          error_type: errorType || 'unknown',
+          duration_ms: duration,
+        });
+      }
+
+      function startAutofillExtraction() {
+        if (autofillInFlight) return;
+        autofillActivated = true;
+        justCompletedAutofill = false;
+        extractionStartedAt = Date.now();
+        extractionTextLength = getMagicClipboardText().length;
+        autofillInFlight = true;
+        autofillUsedInSession = true;
+        setMagicButtonState('pending');
+        setAutofillMeta(TRANSLATIONS[currentLang].autofillProcessing);
+        captureEvent('autofill_extraction_started', {
+          calculator_name: getCalculatorName(),
+          text_char_length: extractionTextLength,
+        });
+        if (extractionTimerId) clearTimeout(extractionTimerId);
+        extractionTimerId = setTimeout(() => failAutofill('timeout'), 8000);
+      }
+
+      function completeAutofillExtraction(response) {
+        if (!autofillInFlight) return;
+        autofillInFlight = false;
+        justCompletedAutofill = true;
+        const duration = extractionStartedAt ? Date.now() - extractionStartedAt : 0;
+        if (extractionTimerId) {
+          clearTimeout(extractionTimerId);
+          extractionTimerId = null;
+        }
+
+        const { filled, total } = countFilledFields(response);
+        const fillRate = total ? Number((filled / total).toFixed(3)) : 0;
+        setMagicButtonState('success');
+        setTimeout(() => setMagicButtonState(''), 1200);
+        clearAutofillMeta();
+
+        autofilledFieldIds.clear();
+        getTrackedFields().forEach(field => {
+          if (isAnswered(findFieldItem(response, field))) {
+            autofilledFieldIds.add(field.linkId);
+          }
+        });
+
+        captureEvent('autofill_extraction_completed', {
+          calculator_name: getCalculatorName(),
+          fields_filled: filled,
+          fields_total: total,
+          fill_rate: fillRate,
+          duration_ms: duration,
+        });
+      }
+
+      if (magicBtn) {
+        magicBtn.addEventListener('click', startAutofillExtraction);
+        const stateObserver = new MutationObserver(() => {
+          const state = magicBtn.getAttribute('data-state');
+          if (state === 'error' && autofillInFlight) failAutofill('sdk_error');
+        });
+        stateObserver.observe(magicBtn, { attributes: true, attributeFilter: ['data-state'] });
+      }
+
+      if (magicClipboard) {
+        document.addEventListener('paste', e => {
+          const path = e.composedPath ? e.composedPath() : [];
+          const fromClipboard = path.includes(magicClipboard) || magicClipboard.contains(e.target);
+          if (!fromClipboard) return;
+          const text = e.clipboardData?.getData('text/plain') || '';
+          lastPasteAt = Date.now();
+          captureEvent('autofill_text_pasted', {
+            calculator_name: getCalculatorName(),
+            text_char_length: text.length,
+            has_existing_fill: countFilledFields(lastResponse).filled > 0,
+          });
+        }, true);
+      }
+
+      // ---- Footer year ----
+      document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+      // ---- Dismiss banner ----
+      document.getElementById('banner-close').addEventListener('click', () => {
+        const banner = document.getElementById('banner');
+        banner.style.transition = 'opacity 0.2s ease';
+        banner.style.opacity = '0';
+        setTimeout(() => banner.remove(), 210);
+      });
+
+      // ---- Field highlight helpers ----
+      function findItemByLinkId(items, linkId) {
+        for (const item of (items || [])) {
+          if (item.linkId === linkId) return item;
+          if (item.item) {
+            const found = findItemByLinkId(item.item, linkId);
+            if (found) return found;
+          }
+        }
+        return null;
+      }
+
+      function isAnswered(item) {
+        if (!item?.answer?.length) return false;
+        const a = item.answer[0];
+        return a.valueCoding != null || a.valueDecimal != null ||
+               a.valueInteger != null || a.valueString != null ||
+               a.valueBoolean != null;
+      }
+
+      function normalizeLabel(text) {
+        return String(text || '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-zA-Z0-9]+/g, ' ')
+          .trim()
+          .toLowerCase();
+      }
+
+      function getFieldLabels(field) {
+        if (Array.isArray(field.labels)) return field.labels;
+        if (Array.isArray(field.label)) return field.label;
+        return field.label ? [field.label] : [];
+      }
+
+      function findItemByLabels(items, labels) {
+        const normalizedLabels = (labels || []).map(normalizeLabel).filter(Boolean);
+        if (!normalizedLabels.length) return null;
+
+        let bestItem = null;
+        let bestScore = 0;
+
+        function visit(arr) {
+          for (const item of (arr || [])) {
+            const text = normalizeLabel(item?.text || '');
+            if (text) {
+              let score = 0;
+              for (const candidate of normalizedLabels) {
+                score = Math.max(score, getLabelMatchScore(text, candidate));
+              }
+              if (score > 0) {
+                if (item?.answer?.length) score += 15;
+                if (score > bestScore) {
+                  bestScore = score;
+                  bestItem = item;
+                }
+              }
+            }
+            if (item?.item) visit(item.item);
+          }
+        }
+
+        visit(items);
+        return bestScore >= 35 ? bestItem : null;
+      }
+
+      function findFieldItem(response, field) {
+        return findItemByLinkId(response?.item, field.linkId) ||
+               findItemByLabels(response?.item, getFieldLabels(field));
+      }
+
+      // ---- Field highlighting ----
+      // We apply inline styles directly on discovered elements so we don't depend
+      // on stylesheets reaching across shadow root boundaries.
+      const linkIdToEl = {};
+      let highlightReady    = false;
+      let autofillActivated = false;  // true once autofill button has been clicked
+
+      // Recursively walk an element tree, descending into open shadow roots.
+      // Also checks the root's own shadow root before walking light DOM children.
+      function deepWalk(root, callback) {
+        if (root.shadowRoot) deepWalk(root.shadowRoot, callback);
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+        let node;
+        while ((node = walker.nextNode())) {
+          callback(node);
+          if (node.shadowRoot) deepWalk(node.shadowRoot, callback);
+        }
+      }
+
+      function isQuestionContainer(el) {
+        if (!el) return false;
+        if (el === form) return false;
+        return Boolean(
+          el.querySelector?.('[role="radio"], [role="checkbox"], input, select, textarea, button[aria-pressed], button[role="radio"], .tiro-content-editable-container')
+        );
+      }
+
+      function findBestQuestionContainer(startEl) {
+        if (!startEl) return null;
+        let current = startEl;
+        let best = null;
+        for (let i = 0; i < 8; i++) {
+          if (!current || current === form || current.tagName === 'TIRO-FORM-FILLER') break;
+          if (isQuestionContainer(current)) {
+            best = current;
+            if (current.childElementCount >= 2) break;
+          }
+          current = current.parentElement;
+        }
+        return best || startEl;
+      }
+
+      function getLabelMatchScore(normalizedText, normalizedLabel) {
+        if (!normalizedText || !normalizedLabel) return 0;
+        if (normalizedText === normalizedLabel) return 100;
+        if (normalizedText.includes(normalizedLabel)) return 70;
+        if (normalizedLabel.includes(normalizedText) && normalizedText.length >= 10) return 35;
+        return 0;
+      }
+
+      function discoverQuestionItems() {
+        const fields = CALCULATOR_FIELDS[currentCalcId];
+        if (!fields) return false;
+
+        const needed = new Map(
+          fields.filter(f => !linkIdToEl[f.linkId]).map(f => [f.linkId, f])
+        );
+        if (!needed.size) return true;
+
+        // Strategy 1: attribute-value match (works if SDK exposes linkId as DOM attr)
+        deepWalk(form, el => {
+          if (!needed.size) return;
+          const v = el.getAttribute?.('linkId') || el.getAttribute?.('linkid') || el.getAttribute?.('data-link-id');
+          if (v && needed.has(v)) {
+            linkIdToEl[v] = el;
+            needed.delete(v);
+            return;
+          }
+          for (const attr of (el.attributes || [])) {
+            if (needed.has(attr.value)) {
+              linkIdToEl[attr.value] = el;
+              needed.delete(attr.value);
+              break;
+            }
+          }
+        });
+
+        // Strategy 2: robust label-text match (for calculators where linkId isn't exposed in DOM)
+        if (needed.size) {
+          [...needed.values()].forEach(f => {
+            const normalizedLabels = getFieldLabels(f)
+              .map(normalizeLabel)
+              .filter(Boolean);
+            if (!normalizedLabels.length) return;
+
+            let bestEl = null;
+            let bestScore = 0;
+            deepWalk(form, el => {
+              const text = el.textContent?.trim();
+              if (!text || text.length > 260) return;
+              const normalizedText = normalizeLabel(text);
+              if (!normalizedText) return;
+
+              let score = 0;
+              normalizedLabels.forEach(label => {
+                score = Math.max(score, getLabelMatchScore(normalizedText, label));
+              });
+              if (score <= bestScore) return;
+              bestScore = score;
+              bestEl = el;
+            });
+
+            if (bestEl && bestScore >= 35) {
+              linkIdToEl[f.linkId] = findBestQuestionContainer(bestEl);
+              needed.delete(f.linkId);
+            }
+          });
+        }
+
+        const found = fields.length - needed.size;
+        if (found === 0) {
+          console.warn('[Report2Score] highlight: no elements found yet, scheduling retries…');
+          [400, 1000, 2000, 4000].forEach(delay => setTimeout(() => {
+            if (!highlightReady) {
+              highlightReady = discoverQuestionItems();
+              if (highlightReady && lastResponse) applyFieldHighlights(lastResponse);
+            }
+          }, delay));
+        } else {
+          console.debug(`[Report2Score] highlight: ${found}/${fields.length} elements found.`);
+        }
+        return found > 0;
+      }
+
+      // Apply or clear inline highlight styles directly on discovered elements.
+      function setEmptyStyle(el) {
+        el.style.setProperty('outline',         '2px solid #f97316', 'important');
+        el.style.setProperty('outline-offset',  '3px',               'important');
+        el.style.setProperty('border-radius',   '0.5rem',            'important');
+        el.style.setProperty('background',      'rgba(251,146,60,0.06)', 'important');
+        el.style.setProperty('transition',      'outline 0.25s, background 0.25s');
+      }
+
+      function clearStyle(el) {
+        ['outline','outline-offset','border-radius','background','transition']
+          .forEach(p => el.style.removeProperty(p));
+      }
+
+      function flashFilledStyle(el) {
+        el.style.setProperty('outline',       '2px solid #16a34a', 'important');
+        el.style.setProperty('outline-offset','3px',               'important');
+        el.style.setProperty('border-radius', '0.5rem',            'important');
+        el.style.setProperty('background',    'rgba(22,163,74,0.08)', 'important');
+        el.style.setProperty('transition',    'outline 0.6s, background 0.6s');
+        setTimeout(() => clearStyle(el), 900);
+      }
+
+      function applyFieldHighlights(response) {
+        const fields = CALCULATOR_FIELDS[currentCalcId];
+        if (!fields) return;
+
+        // Lazy discovery — retry every call until at least one element is found
+        if (!highlightReady) highlightReady = discoverQuestionItems();
+
+        let filledCount = 0;
+        fields.forEach(f => {
+          const item   = findFieldItem(response, f) || latestItemByLinkId.get(f.linkId);
+          const filled = isAnswered(item);
+          if (filled) filledCount++;
+
+          const el = linkIdToEl[f.linkId];
+          if (!el) return;
+
+          const wasEmpty = el.dataset.hlState === 'empty';
+          if (filled) {
+            if (wasEmpty) {
+              // Transition: empty → filled — brief green flash then neutral
+              delete el.dataset.hlState;
+              flashFilledStyle(el);
+            }
+          } else {
+            el.dataset.hlState = 'empty';
+            setEmptyStyle(el);
+          }
+        });
+
+        // Show badge after autofill has run, even if zero fields were filled.
+        if (autofillActivated) {
+          updateMissingBadge(fields.length - filledCount, fields.length);
+        }
+      }
+
+      function updateMissingBadge(missing, total) {
+        const badge = document.getElementById('missing-badge');
+        if (!badge) return;
+        if (missing === 0) {
+          badge.textContent   = TRANSLATIONS[currentLang].allFieldsDone;
+          badge.className     = 'missing-badge missing-badge--done';
+          badge.style.display = 'inline-flex';
+          setTimeout(() => { badge.style.display = 'none'; }, 4000);
+        } else {
+          badge.textContent   = TRANSLATIONS[currentLang].missingCount(missing);
+          badge.className     = 'missing-badge';
+          badge.style.display = 'inline-flex';
+        }
+      }
+
+      function resetHighlights() {
+        Object.entries(linkIdToEl).forEach(([, el]) => {
+          clearStyle(el);
+          delete el.dataset.hlState;
+        });
+        Object.keys(linkIdToEl).forEach(k => delete linkIdToEl[k]);
+        latestItemByLinkId.clear();
+        highlightReady    = false;
+        autofillActivated = false;
+        autofillInFlight  = false;
+        justCompletedAutofill = false;
+        allFieldsComplete = false;
+        if (extractionTimerId) {
+          clearTimeout(extractionTimerId);
+          extractionTimerId = null;
+        }
+        const badge = document.getElementById('missing-badge');
+        if (badge) badge.style.display = 'none';
+      }
+
+      // ---- Load calculator ----
+      function loadCalculator(id) {
+        const calc = CALCULATORS.find(c => c.id === id);
+        if (calc) form.setAttribute('questionnaire', calc.url);
+        resultPanel.classList.remove('visible');
+        resultItems.innerHTML = '';
+        copyBtn.classList.remove('results__copy--attention', 'copied');
+        clearAutofillMeta();
+        autofilledFieldIds.clear();
+        previousResponse = null;
+        lastResponse = null;
+        resetHighlights();
+      }
+
+      // ---- Calculator search modal ----
+      function renderModalList() {
+        if (!filteredCalcs.length) {
+          calcModalList.innerHTML = `<li class="calc-modal__empty">${escHtml(TRANSLATIONS[currentLang].noResults)}</li>`;
+          return;
+        }
+        calcModalList.innerHTML = filteredCalcs.map((c, i) => `
+          <li class="calc-modal__item${i === modalActiveIdx ? ' calc-modal__item--active' : ''}${c.id === currentCalcId ? ' calc-modal__item--current' : ''}"
+              role="option" aria-selected="${i === modalActiveIdx}" data-id="${c.id}"
+              data-ph-capture-attribute-calculator="${c.id}">
+            ${escHtml(c.label)}
+          </li>`).join('');
+      }
+
+      function openCalcModal() {
+        filteredCalcs  = CALCULATORS.slice();
+        modalActiveIdx = Math.max(0, filteredCalcs.findIndex(c => c.id === currentCalcId));
+        calcModalInput.value = '';
+        calcModal.classList.add('open');
+        renderModalList();
+        calcModalInput.focus();
+        scrollActiveIntoView();
+      }
+
+      function closeCalcModal() {
+        calcModal.classList.remove('open');
+      }
+
+      function selectCalc(id) {
+        currentCalcId = id;
+        comboInput.value = CALCULATORS.find(c => c.id === id)?.label || '';
+        closeCalcModal();
+        loadCalculator(id);
+      }
+
+      function scrollActiveIntoView() {
+        calcModalList.querySelectorAll('.calc-modal__item')[modalActiveIdx]?.scrollIntoView({ block: 'nearest' });
+      }
+
+      document.getElementById('calc-modal-backdrop').addEventListener('click', closeCalcModal);
+
+      calcModalInput.addEventListener('input', () => {
+        const q = calcModalInput.value.trim().toLowerCase();
+        filteredCalcs  = q ? CALCULATORS.filter(c => c.label.toLowerCase().includes(q)) : CALCULATORS.slice();
+        modalActiveIdx = 0;
+        renderModalList();
+      });
+
+      calcModalList.addEventListener('click', e => {
+        const item = e.target.closest('.calc-modal__item[data-id]');
+        if (item) selectCalc(item.dataset.id);
+      });
+
+      calcModalInput.addEventListener('keydown', e => {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          modalActiveIdx = Math.min(modalActiveIdx + 1, filteredCalcs.length - 1);
+          renderModalList(); scrollActiveIntoView();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          modalActiveIdx = Math.max(modalActiveIdx - 1, 0);
+          renderModalList(); scrollActiveIntoView();
+        } else if (e.key === 'Enter') {
+          if (filteredCalcs[modalActiveIdx]) selectCalc(filteredCalcs[modalActiveIdx].id);
+        } else if (e.key === 'Escape') {
+          closeCalcModal();
+        }
+      });
+
+      document.addEventListener('keydown', e => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          calcModal.classList.contains('open') ? closeCalcModal() : openCalcModal();
+        }
+        if (e.key === 'Escape' && calcModal.classList.contains('open')) closeCalcModal();
+      });
+
+      // ---- Combobox ----
+      const comboInput   = document.getElementById('calc-combobox');
+      const comboList    = document.getElementById('calc-combobox-list');
+      const comboToggle  = document.getElementById('calc-combobox-toggle');
+      const comboWrapper = comboInput.closest('.combobox');
+      let comboActive    = 0;
+      let comboOpen      = false;
+      let comboFiltered  = CALCULATORS.slice();
+
+      function setComboValue(id) {
+        currentCalcId = id;
+        comboInput.value = CALCULATORS.find(c => c.id === id)?.label || '';
+        comboInput.setAttribute('aria-expanded', 'false');
+        comboList.classList.remove('open');
+        comboWrapper.classList.remove('is-open');
+        comboOpen = false;
+      }
+
+      function renderComboList() {
+        if (!comboFiltered.length) {
+          comboList.innerHTML = '<li class="combobox__option combobox__option--empty">No results</li>';
+          return;
+        }
+        comboList.innerHTML = comboFiltered.map((c, i) => `
+          <li class="combobox__option${i === comboActive ? ' combobox__option--active' : ''}"
+              role="option" data-id="${c.id}" aria-selected="${i === comboActive}"
+              data-ph-capture-attribute-calculator="${c.id}">
+            ${escHtml(c.label)}
+          </li>`).join('');
+      }
+
+      function openCombo() {
+        comboFiltered = CALCULATORS.slice();
+        comboActive   = Math.max(0, comboFiltered.findIndex(c => c.id === currentCalcId));
+        comboInput.setAttribute('aria-expanded', 'true');
+        comboList.classList.add('open');
+        comboWrapper.classList.add('is-open');
+        comboOpen = true;
+        renderComboList();
+        comboList.querySelectorAll('.combobox__option')[comboActive]?.scrollIntoView({ block: 'nearest' });
+      }
+
+      function closeCombo(restoreValue = true) {
+        if (restoreValue) comboInput.value = CALCULATORS.find(c => c.id === currentCalcId)?.label || '';
+        comboInput.setAttribute('aria-expanded', 'false');
+        comboList.classList.remove('open');
+        comboWrapper.classList.remove('is-open');
+        comboOpen = false;
+      }
+
+      comboInput.addEventListener('focus', () => openCombo());
+
+      comboInput.addEventListener('input', () => {
+        const q = comboInput.value.trim().toLowerCase();
+        comboFiltered = q ? CALCULATORS.filter(c => c.label.toLowerCase().includes(q)) : CALCULATORS.slice();
+        comboActive = 0;
+        if (!comboOpen) { comboList.classList.add('open'); comboOpen = true; }
+        renderComboList();
+      });
+
+      comboInput.addEventListener('keydown', e => {
+        if (!comboOpen) { if (e.key === 'ArrowDown') openCombo(); return; }
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          comboActive = Math.min(comboActive + 1, comboFiltered.length - 1);
+          renderComboList();
+          comboList.querySelectorAll('.combobox__option')[comboActive]?.scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          comboActive = Math.max(comboActive - 1, 0);
+          renderComboList();
+          comboList.querySelectorAll('.combobox__option')[comboActive]?.scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          const chosen = comboFiltered[comboActive];
+          if (chosen) { setComboValue(chosen.id); loadCalculator(chosen.id); }
+        } else if (e.key === 'Escape') {
+          closeCombo(true);
+        }
+      });
+
+      comboList.addEventListener('mousedown', e => {
+        const opt = e.target.closest('[data-id]');
+        if (!opt) return;
+        e.preventDefault();
+        setComboValue(opt.dataset.id);
+        loadCalculator(opt.dataset.id);
+      });
+
+      comboToggle.addEventListener('mousedown', e => e.preventDefault());
+      comboToggle.addEventListener('click', () => {
+        comboOpen ? closeCombo(true) : openCombo();
+        comboInput.focus();
+      });
+
+      document.addEventListener('click', e => {
+        if (comboOpen && !comboWrapper.contains(e.target)) closeCombo(true);
+      });
+
+      setComboValue(CALCULATORS[0].id);
+      loadCalculator(CALCULATORS[0].id);
+
+      // Apply saved language on load (after renderComboList is defined)
+      applyLanguage(currentLang);
+      capturePageView();
+
+      // ---- Wire tiro-update → renderResults + field highlights ----
+      document.querySelectorAll('tiro-form-filler').forEach(ff => {
+        ff.addEventListener('tiro-update', e => {
+          previousResponse = lastResponse;
+          lastResponse = e.detail?.response;
+          updateLatestItemsFromResponse(lastResponse);
+          if (autofillInFlight) completeAutofillExtraction(lastResponse);
+          renderResults(lastResponse);
+          // Apply highlights only after autofill has been used
+          if (autofillActivated && CALCULATOR_FIELDS[currentCalcId] && lastResponse) {
+            applyFieldHighlights(lastResponse);
+          }
+          if (autofillUsedInSession && !autofillInFlight && !justCompletedAutofill) {
+            const fields = getTrackedFields();
+            fields.forEach(field => {
+              const linkId = field.linkId;
+              const prevItem = findFieldItem(previousResponse, field);
+              const currItem = findFieldItem(lastResponse, field);
+              const prevValue = getFieldEventValue(prevItem);
+              const currValue = getFieldEventValue(currItem);
+              if (prevValue === currValue) return;
+              if (!autofilledFieldIds.has(linkId)) return;
+              clearAutofillMeta();
+              captureEvent('autofill_field_overridden', {
+                calculator_name: getCalculatorName(),
+                field_id: linkId,
+                was_autofilled: true,
+                new_value_code: currValue,
+              });
+            });
+          }
+          justCompletedAutofill = false;
+        });
+      });
+
+      // ---- Parse FHIR response ----
+      function getAnswerText(answer) {
+        if (answer.valueDecimal  !== undefined) return String(answer.valueDecimal);
+        if (answer.valueInteger  !== undefined) return String(answer.valueInteger);
+        if (answer.valueString   !== undefined) return answer.valueString;
+        if (answer.valueBoolean  !== undefined) return answer.valueBoolean ? TRANSLATIONS[currentLang].boolYes : TRANSLATIONS[currentLang].boolNo;
+        if (answer.valueCoding)                 return answer.valueCoding.display || answer.valueCoding.code || '';
+        if (answer.valueDate     !== undefined) return answer.valueDate;
+        return '';
+      }
+
+      function collectAnswers(items, out = []) {
+        for (const item of (items || [])) {
+          if (item.answer && item.answer.length > 0) {
+            const values = item.answer.map(getAnswerText).filter(Boolean).join(', ');
+            if (values) out.push({ label: item.text || item.linkId, value: values, linkId: item.linkId });
+          }
+          if (item.item) collectAnswers(item.item, out);
+        }
+        return out;
+      }
+
+      // ---- Render results ----
+      function escHtml(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      function getScores(response) {
+        const allAnswers = collectAnswers(response?.item);
+        const calc = CALCULATORS.find(c => c.id === currentCalcId);
+        const appendPercentLabels = new Set((calc?.appendPercentLabels || []).map(l => l.toLowerCase()));
+
+        let scores;
+        if (calc?.resultLabels?.length) {
+          // Whitelist: only show explicitly named output fields
+          const resultLabels = new Set(calc.resultLabels.map(l => l.toLowerCase()));
+          scores = allAnswers.filter(a => resultLabels.has((a.label || '').toLowerCase()));
+        } else {
+          // Fallback: exclude known input linkIds, then cap by resultCount
+          const inputIds = new Set((CALCULATOR_FIELDS[currentCalcId] || []).map(f => f.linkId));
+          const excludeLabels = new Set((calc?.excludeLabels || []).map(l => l.toLowerCase()));
+          scores = allAnswers.filter(a =>
+            !inputIds.has(a.linkId) &&
+            !excludeLabels.has((a.label || '').toLowerCase())
+          );
+          if (calc?.resultCount) scores = scores.slice(-calc.resultCount);
+        }
+
+        scores = scores.map(s => {
+          const needsPercent = calc?.appendPercentAll ||
+            appendPercentLabels.has((s.label || '').toLowerCase());
+          if (needsPercent && !s.value.trim().endsWith('%')) {
+            return { ...s, value: s.value + '%' };
+          }
+          return s;
+        });
+        return scores;
+      }
+
+      function renderResults(response) {
+        const scores = getScores(response);
+
+        if (!scores.length) {
+          resultPanel.classList.remove('visible');
+          resultItems.innerHTML = '';
+          allFieldsComplete = false;
+          copyBtn.classList.remove('results__copy--attention');
+          return;
+        }
+
+        resultItems.innerHTML = scores.map(({ label, value }) => `
+          <div class="score-chip">
+            <span class="score-chip__label">${escHtml(label)}</span>
+            <span class="score-chip__value">${escHtml(value)}</span>
+          </div>`).join('');
+
+        resultPanel.classList.add('visible');
+        if (!copyBtn.classList.contains('copied')) {
+          copyBtn.classList.add('results__copy--attention');
+        }
+
+        const { filled, total } = countFilledFields(response);
+        const nowComplete = total > 0 && filled === total;
+        if (nowComplete && !allFieldsComplete) {
+          const score = scores[scores.length - 1]?.value || '';
+          captureEvent('calculator_score_calculated', {
+            calculator_name: getCalculatorName(),
+            score,
+            used_autofill: autofillUsedInSession,
+            autofilled_fields_count: autofilledFieldIds.size,
+            manual_fields_count: Math.max(0, total - autofilledFieldIds.size),
+          });
+        }
+        allFieldsComplete = nowComplete;
+      }
+
+      // ---- Copy to clipboard ----
+      copyBtn.addEventListener('click', () => {
+        const scores = getScores(lastResponse);
+        if (!scores.length) return;
+
+        const calc = CALCULATORS.find(c => c.id === currentCalcId);
+        const calcLabel = calc?.label || TRANSLATIONS[currentLang].resultsLabel;
+        const lines = [calcLabel, ''];
+        scores.forEach(({ label, value }) => lines.push(`${label}: ${value}`));
+        const selectedRows = scores.length;
+
+        navigator.clipboard.writeText(lines.join('\n')).then(() => {
+          captureEvent('results_copied', {
+            calculator_name: getCalculatorName(),
+            selected_result_rows: selectedRows,
+            used_autofill: autofillUsedInSession,
+          });
+          const originalHTML = copyBtn.innerHTML;
+          copyBtn.classList.remove('results__copy--attention');
+          copyBtn.classList.add('copied');
+          copyBtn.innerHTML = `
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span data-i18n-text>${escHtml(TRANSLATIONS[currentLang].copiedBtn)}</span>
+          `;
+          setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            copyBtn.innerHTML = originalHTML;
+            if (resultPanel.classList.contains('visible')) {
+              copyBtn.classList.add('results__copy--attention');
+            }
+          }, 2000);
+        });
+      });
+    </script>
+
+  </body>
+</html>

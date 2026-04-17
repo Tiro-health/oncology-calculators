@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Report2Score</title>
+    <title>Report2Score — Oncology Calculators</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -385,6 +385,35 @@
       /* Card body padding */
       .card__body {
         padding: 1.3rem;
+      }
+
+      /* ============================================================
+         Picture-in-Picture button
+      ============================================================ */
+      .pip-btn {
+        display: none; /* revealed by JS when API is available */
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.22rem 0.5rem;
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        background: none;
+        border: 1px solid var(--border-soft);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s, border-color 0.15s;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      .pip-btn:hover {
+        background: var(--bg-page);
+        color: var(--text-main);
+      }
+      .pip-btn--active {
+        color: var(--brand);
+        border-color: var(--brand);
+        background: #eff6ff;
       }
 
       /* ============================================================
@@ -956,6 +985,13 @@
                 <span data-i18n="autofillLabel">Klinisch verslag</span>
               </span>
               <span class="missing-badge" id="missing-badge" style="display:none" aria-live="polite"></span>
+              <button type="button" class="pip-btn" id="pip-btn" title="Pop out to Picture-in-Picture" aria-label="Open in Picture-in-Picture">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <rect x="10" y="11" width="12" height="8" rx="1" ry="1"></rect>
+                </svg>
+                PiP
+              </button>
             </div>
             <div class="card__body">
               <tiro-magic-clipboard for="calculator-form" hide-toolbar data-i18n-placeholder="autofillPlaceholder" placeholder="Plak hier uw verslag en extraheer automatisch data voor de berekening">
@@ -1043,7 +1079,7 @@
     <script>
       const TRANSLATIONS = {
         en: {
-          mainTitle:         'Clinical Calculators',
+          mainTitle:         'Oncology Calculators',
           mainSubtitle:      'Paste once, review quickly, and copy structured results with confidence.',
           heroTitle:         'Paste your report \u2192 get your scores instantly',
           workflowInput:     'Step 1',
@@ -1075,15 +1111,15 @@
           boolYes:           'Yes',
           boolNo:            'No',
           calcNames: {
-            tri:        'TRI Score',
-            hasbled:    'HAS-BLED Score',
-            euroscore2: 'EuroSCORE II',
-            chadsvasc:  'CHA\u2082DS\u2082-VASc Score',
-            bmi:        'BMI',
+            ecog:      'ECOG Performance Status',
+            cci:       'Charlson Comorbidity Index',
+            ipi:       'International Prognostic Index (IPI)',
+            g8:        'G8 Geriatric Assessment',
+            karnofsky: 'Karnofsky Performance Scale',
           },
         },
         nl: {
-          mainTitle:         'Klinische calculators',
+          mainTitle:         'Oncologische calculators',
           mainSubtitle:      'Plak één keer, controleer snel en kopieer met vertrouwen gestructureerde resultaten.',
           heroTitle:         'Plak uw verslag \u2192 bereken scores onmiddellijk',
           workflowInput:     'Stap 1',
@@ -1115,101 +1151,32 @@
           boolYes:           'Ja',
           boolNo:            'Nee',
           calcNames: {
-            tri:        'TRI Score',
-            hasbled:    'HAS-BLED Score',
-            euroscore2: 'EuroSCORE II',
-            chadsvasc:  'CHA\u2082DS\u2082-VASc Score',
-            bmi:        'BMI',
+            ecog:      'ECOG-performantiestatus',
+            cci:       'Charlson Comorbiditeitsindex',
+            ipi:       'Internationaal Prognostisch Index (IPI)',
+            g8:        'G8 Geriatrisch Assessment',
+            karnofsky: 'Karnofsky Performantieschaal',
           },
         },
       };
 
       const CALCULATORS = [
-        {
-          id: 'euroscore2',
-          label: 'EuroSCORE II',
-          url: 'http://templates.tiro.health/templates/3171b88fff9a4b61af84fe354a26b48b',
-          resultCount: 1,
-          excludeLabels: ['nierfunctie categorie', 'lvef categorie'],
-          appendPercentAll: true,
-        },
-        {
-          id: 'tri',
-          label: 'TRI Score',
-          url: 'http://templates.tiro.health/templates/718620a797d84dd58bd2c92d395e0e90',
-          resultLabels: ['tri score', 'tri-score', 'risicoscore', 'geschatte intramurale mortaliteit'],
-          appendPercentLabels: ['geschatte intramurale mortaliteit'],
-        },
-        {
-          id: 'hasbled',
-          label: 'HAS-BLED Score',
-          url: 'http://templates.tiro.health/templates/71a49276146c4492a9053bfb296d0d17',
-          resultLabels: ['has-bled score', 'bloedingsrisico', 'bloedingen per 100 patiëntjaren', 'aanbeveling'],
-          appendPercentLabels: ['bloedingen per 100 patiëntjaren'],
-        },
-        {
-          id: 'chadsvasc',
-          label: 'CHA\u2082DS\u2082-VASc Score',
-          url: 'http://templates.tiro.health/templates/9f1f296ba5ae415f97c8e71464c402df',
-          resultCount: 1
-        },
+        { id: 'ecog',      label: 'ECOG Performance Status',              url: null, placeholder: true },
+        { id: 'cci',       label: 'Charlson Comorbidity Index',           url: null, placeholder: true },
+        { id: 'ipi',       label: 'International Prognostic Index (IPI)', url: null, placeholder: true },
+        { id: 'g8',        label: 'G8 Geriatric Assessment',              url: null, placeholder: true },
+        { id: 'karnofsky', label: 'Karnofsky Performance Scale',          url: null, placeholder: true },
       ];
 
       // ---- Per-calculator field definitions (for checklist) ----
-      // linkId values come from the local FHIR Questionnaire resources.
+      // linkId values come from the FHIR Questionnaire resources.
       // The last item in each array is the calculated score — excluded from checklist.
       const CALCULATOR_FIELDS = {
-        chadsvasc: [
-          { linkId: '019d12b3-87c2-7dda-9973-dd83c286c5e9', labels: ['Leeftijd'] },
-          { linkId: '019d12b3-87c2-7dda-9973-eeda5399cefe', labels: ['Geslacht'] },
-          { linkId: '019d12b3-87c2-7dda-9973-fccbc530555d', labels: ['Voorgeschiedenis van hartfalen (CHF)', 'Hartfalen'] },
-          { linkId: '019d12b3-87c2-7dda-9974-0f72342b28d9', labels: ['Voorgeschiedenis van hypertensie', 'Hypertensie'] },
-          { linkId: '019d12b3-87c2-7dda-9974-182d496a3796', labels: ['Voorgeschiedenis van beroerte/TIA/trombo-embolie', 'Beroerte / TIA'] },
-          { linkId: '019d12b3-87c2-7dda-9974-28017084dbd2', labels: ['Voorgeschiedenis van vaatziekte (MI, PAD of aortaplaque)', 'Vaatziekte'] },
-          { linkId: '019d12b3-87c2-7dda-9974-3a768b8d2690', labels: ['Voorgeschiedenis van diabetes', 'Diabetes'] },
-        ],
-        euroscore2: [
-          { linkId: '019cfab4-f257-799c-9df2-257a2358dd42', labels: ['Leeftijd'] },
-          { linkId: '019cfab4-f257-799c-9df2-37528cfe2ff0', labels: ['Geslacht'] },
-          { linkId: '019cfab4-f257-799c-9df2-43f960ae27ea', labels: ['Insuline-afhankelijke diabetes'] },
-          { linkId: '019cfab4-f257-799c-9df2-507647e5b2b6', labels: ['Chronisch obstructief longlijden', 'COPD'] },
-          { linkId: '019cfab4-f257-799c-9df2-67c2465b8ba3', labels: ['Verminderde mobiliteit'] },
-          { linkId: '019cfab4-f257-799c-9df2-758d25b8cb10', labels: ['eGFR', 'EGFR'] },
-          { linkId: '019cfab4-f257-799c-9df2-93c11b2d4a14', labels: ['Onder nierdialyse', 'Nierdialyse'] },
-          { linkId: '019cfab4-f257-799c-9df2-a35cffcfb233', labels: ['Kritieke toestand'] },
-          { linkId: '019cfab4-f257-799c-9df2-b49604d154e7', labels: ['NYHA class', 'NYHA klasse'] },
-          { linkId: '019cfab4-f257-799c-9df2-c27a30983a24', labels: ['Angor CCS4'] },
-          { linkId: '019cfab4-f257-799c-9df2-d2adc7285ad9', labels: ['Extracardiale arteriopathie'] },
-          { linkId: '019cfab4-f257-799c-9df2-e25f6e7b89ca', labels: ['Heeft de patiënt reeds een hartoperatie ondergaan?', 'Voorafgaande hartoperatie'] },
-          { linkId: '019cfab4-f257-799c-9df2-f703c71ff24f', labels: ['Actieve endocarditis'] },
-          { linkId: '019cfab4-f257-799c-9df3-0462ff6403c7', labels: ['LVEF (%)', 'LVEF'] },
-          { linkId: '019cfab4-f257-799c-9df3-26d3767c5bf9', labels: ['Recent myocardinfarct'] },
-          { linkId: '019cfab4-f257-799c-9df3-3060bd1d681e', labels: ['Systolische pulmonale arteriële druk', 'Systolische pulmonale arteriele druk'] },
-          { linkId: '019cfab4-f257-799c-9df3-47e2c5c6d6eb', labels: ['Urgentie'] },
-          { linkId: '019cfab4-f257-799c-9df3-559b6e3e6bed', labels: ['Aantal procedures'] },
-          { linkId: '019cfab4-f257-799c-9df3-669be3e2833b', labels: ['Chirurgie aan thoracale aorta'] },
-        ],
-        hasbled: [
-          { linkId: '019d12c9-d7b5-7cc8-80a5-80a9ba9aab18', label: 'Hypertensie' },
-          { linkId: '019d12c9-d7b5-7cc8-80a5-95ec86411aec', label: 'Abnormale nierfunctie' },
-          { linkId: '019d12c9-d7b5-7cc8-80a5-a7ebfab592cf', label: 'Abnormale leverfunctie' },
-          { linkId: '019d12c9-d7b5-7cc8-80a5-b3a6d984a651', label: 'Voorgeschiedenis van beroerte' },
-          { linkId: '019d12c9-d7b5-7cc8-80a5-c26ac387dd05', label: 'Eerdere ernstige bloeding' },
-          { linkId: '019d12c9-d7b5-7cc8-80a5-d1247237d95e', label: 'Labiele INR' },
-          { linkId: '019d12c9-d7b5-7cc8-80a5-e5820d06bb21', label: 'Leeftijd >65' },
-          { linkId: '019d12c9-d7b5-7cc8-80a5-f190c8a408f0', label: 'Bloedingsbevorderende medicatie' },
-          { linkId: '019d12c9-d7b5-7cc8-80a6-054ddafabdb0', label: 'Alcoholgebruik' },
-        ],
-        tri: [
-          { linkId: '019d12b7-3a9c-7770-8819-a44e59c481d5', labels: ['Leeftijd ≥ 70 jaar'] },
-          { linkId: '019d12b7-3a9c-7770-8819-b3fb430f3af7', labels: ['NYHA functionele klasse III–IV', 'NYHA klasse III–IV'] },
-          { linkId: '019d12b7-3a9c-7770-8819-c66b3a451171', labels: ['Tekenen van rechtszijdig hartfalen', 'Rechtszijdig hartfalen'] },
-          { linkId: '019d12b7-3a9c-7770-8819-d60d982999fd', labels: ['Furosemide dagdosis ≥ 125 mg', 'Furosemide ≥ 125 mg/dag'] },
-          { linkId: '019d12b7-3a9c-7770-8819-e6e5ad0b2436', labels: ['GFR < 30 mL/min'] },
-          { linkId: '019d12b7-3a9c-7770-8819-f72ab2c5fe37', labels: ['Verhoogd totaal bilirubine'] },
-          { linkId: '019d12b7-3a9c-7770-881a-06d9dee1bbf5', labels: ['LVEF < 60%'] },
-          { linkId: '019d12b7-3a9c-7770-881a-17af1d0d32bc', labels: ['Matige/ernstige RV-dysfunctie'] },
-        ],
+        ecog:      [],
+        cci:       [],
+        ipi:       [],
+        g8:        [],
+        karnofsky: [],
       };
 
       // ---- Elements ----
@@ -1784,7 +1751,20 @@
       // ---- Load calculator ----
       function loadCalculator(id) {
         const calc = CALCULATORS.find(c => c.id === id);
-        if (calc) form.setAttribute('questionnaire', calc.url);
+        if (calc && calc.url) {
+          form.setAttribute('questionnaire', calc.url);
+          const existing = document.getElementById('calc-placeholder');
+          if (existing) existing.remove();
+        } else {
+          form.removeAttribute('questionnaire');
+          if (!document.getElementById('calc-placeholder')) {
+            const p = document.createElement('p');
+            p.id = 'calc-placeholder';
+            p.style.cssText = 'color:var(--text-muted);font-size:0.9rem;padding:1.5rem 0;text-align:center;';
+            p.textContent = 'This calculator is coming soon.';
+            form.parentNode.insertBefore(p, form);
+          }
+        }
         resultPanel.classList.remove('visible');
         resultItems.innerHTML = '';
         copyBtn.classList.remove('results__copy--attention', 'copied');
@@ -2144,6 +2124,57 @@
           }, 2000);
         });
       });
+
+      // ---- Picture-in-Picture for Magic Clipboard ----
+      (function () {
+        const pipBtn = document.getElementById('pip-btn');
+        if (!('documentPictureInPicture' in window)) return;
+
+        pipBtn.style.display = 'flex';
+        let pipWin = null;
+        const clipboardCard = document.querySelector('.layout__left .card');
+        const leftCol       = document.querySelector('.layout__left');
+
+        pipBtn.addEventListener('click', async () => {
+          // Toggle: close if already open
+          if (pipWin) { pipWin.close(); return; }
+
+          try {
+            pipWin = await window.documentPictureInPicture.requestWindow({
+              width: 440,
+              height: 340,
+            });
+
+            // Mirror all <style> blocks so CSS variables + card styles are available
+            document.querySelectorAll('style').forEach(s => {
+              const clone = pipWin.document.createElement('style');
+              clone.textContent = s.textContent;
+              pipWin.document.head.appendChild(clone);
+            });
+
+            pipWin.document.body.style.cssText =
+              'margin:0;padding:0.8rem;box-sizing:border-box;background:var(--bg-page,#eef3f8);';
+
+            // Move the card — existing JS references (magicClipboard, magicBtn) remain valid
+            pipWin.document.body.appendChild(clipboardCard);
+
+            pipBtn.classList.add('pip-btn--active');
+            pipBtn.title = 'Close Picture-in-Picture';
+
+            // Restore when PiP is closed (by browser button or programmatically)
+            pipWin.addEventListener('pagehide', () => {
+              leftCol.insertBefore(clipboardCard, leftCol.firstChild);
+              pipBtn.classList.remove('pip-btn--active');
+              pipBtn.title = 'Pop out to Picture-in-Picture';
+              pipWin = null;
+            });
+
+          } catch (err) {
+            console.warn('Document PiP failed:', err);
+            pipWin = null;
+          }
+        });
+      })();
     </script>
 
   </body>
